@@ -1,0 +1,69 @@
+============================
+Principal Component Analysis
+============================
+
+Overview
+--------
+
+Principal Component Analysis (PCA) is a method for exploratory data analysis.
+PCA transforms a set of observations of possibly correlated variables
+to a new set of uncorrelated variables, called principal components.
+Principal components are the directions of the largest variance, that is,
+the directions where the data is mostly spread out.
+
+Because all principal components are orthogonal to each other,
+there is no redundant information.
+This is a way of replacing a group of variables with a smaller set of new variables.
+PCA is one of powerful techniques for dimension reduction.
+
+Details
+-------
+
+.. _Bro07: https://software.intel.com/node/c814f4c3-1fa3-4e8e-bcbf-ccefb849b559#BRO07
+
+Given a set :math:`x={x_1=(x_{11}, ..., x_{1p}), ..., (x_{n1}, ..., x_{np})}`
+of :math:`p` - dimentional feature vectors or
+a :math:`p \times p` correlation matrix
+and the number of principal components :math:`p_r`, the problem is to compute
+:math:`p_r` principal directions (eigenvectors) for the data set.
+The library returns the transformation matrix :math:`T` of size
+:math:`p_r \times p`, which contains eigenvectors in the row-major order
+and a vector of respective eigenvalues in descending order.
+
+*Intel DAAL OneAPI* provides one method for running PCA:
+    * Correlation
+
+Eigenvectors computed by PCA are not uniquely defined due to sign ambiguity.
+PCA supports fast ad-hoc "sign flip" technique described in the paper [Bro07_].
+It modifies the signs of eigenvectors shown below:
+
+.. math::
+    \newcommand{\sgn}{\operatorname{sgn}}
+    \hat{T_i}=T_i*\sgn{\bigg(\max_{1 \leq j \leq p}{|T_{i,j}|}\bigg)}, i=1,...,p_r
+
+where :math:`T` - transformation matrix is computed by PCA,
+:math:`T_i` - *i*-th row in the matrix,
+*j* - column number,
+:math:`\sgn` - signum function:
+
+.. math::
+        \sgn(x) =
+        \left\{
+        \begin{array}{rl}
+            -1,& x < 0\\
+            0,& x = 0\\
+            1,& x > 0
+        \end{array}
+    \right.
+
+You can provide these types of input data to the PCA algorithms of the library:
+    * Original, non-normalized data set
+    * Normalized data set, where each feature has the zero mean and unit variance
+    * Correlation matrix
+
+Example
+-------
+
+.. literalinclude:: ../../examples/cpp/source/pca/pca_cor_dense_batch.cpp
+    :language: c++
+    :linenos:
